@@ -5,11 +5,12 @@
 
 	function run(){
 	
+	//SETS UP EVENT HANDLERS THAT ALLOW PLAYER TO MOVE THEIR ICON
 	var theUrl = "https://maps.googleapis.com/maps/api/geocode/json?address=1600+Amphitheatre+Parkway,+Mountain+View,+CA";
 	var rightPressed = false;
 	var leftPressed = false;
 	var upPressed = false;
-	var DownPressed = false;
+	var downPressed = false;
 	document.addEventListener("keydown", keyDownHandler, false);
 	document.addEventListener("keyup", keyUpHandler, false);
 	
@@ -55,7 +56,9 @@
 		function initialize() {
 		//CREATE MAP
 			//specifies address to focus this zombie game on
-			  var address = new google.maps.LatLng(40.7465406,-74.2596245);
+			  var addresslat = 40.7465406;
+			  var addresslong = -74.2596245;
+			  var address = new google.maps.LatLng(addresslat,addresslong);
 			//creates map based on address
 			  map = new google.maps.Map(document.getElementById('googleMap'), {
 				  center: address,
@@ -127,14 +130,14 @@
 			  
 			setInterval(function(){
 				if(rightPressed) {
-					playerlong += .0001;
+					playerlong += .00002;
 				}
 				else if(leftPressed) {
-					playerlong -= .0001;
+					playerlong -= .00002;
 				} else if(upPressed){
-					playerlat += .0001;
+					playerlat += .00002;
 				} else if(downPressed){
-					playerlat -= .0001
+					playerlat -= .00002
 				}
 				
 				testofplayermovement.setPosition(new google.maps.LatLng( playerlat,  playerlong) );
@@ -153,6 +156,12 @@
 				testlat += dx;
 				testlong += dy;
 				testofmarkermovement.setPosition(new google.maps.LatLng( testlat,  testlong) );
+				if(testlat>40.7465406 + .0045 || testlat< 40.7465406 - .0045){
+					dx = -dx;
+				}
+				if(testlong>-74.2596245 + .0045 || testlat< -74.2596245 - .0045){
+					dy  = -dx;
+				}
 			}, 1000);
 		  }
 		}

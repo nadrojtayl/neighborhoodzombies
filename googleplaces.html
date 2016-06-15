@@ -62,7 +62,13 @@
 			//creates map based on address
 			  map = new google.maps.Map(document.getElementById('googleMap'), {
 				  center: address,
-				  zoom: 15
+				  zoom: 15,
+				  scrollwheel: false,
+			navigationControl: false,
+			mapTypeControl: false,
+			scaleControl: false,
+			draggable: false,
+			keyboardShortcuts: false
 				});
 		//GET PLACES
 		//composes request to get names of local businesses and places from google
@@ -210,6 +216,11 @@
 			if (this.food > 0){
 				this.food = this.food - amount;
 			}
+		}
+		
+		//DEFINES ZOMBIBE OBJECTS
+		function Zombie(){
+		
 		}
 		
 		//draws timer that informs player when new zombies will appear

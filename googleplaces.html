@@ -6,6 +6,12 @@
 	function run(){
 	
 	var theUrl = "https://maps.googleapis.com/maps/api/geocode/json?address=1600+Amphitheatre+Parkway,+Mountain+View,+CA";
+	var rightPressed = false;
+	var leftPressed = false;
+	var upPressed = false;
+	var DownPressed = false;
+	document.addEventListener("keydown", keyDownHandler, false);
+	document.addEventListener("keyup", keyUpHandler, false);
 	
 	function httpGetAsync(theUrl, callback)
 	{
@@ -18,9 +24,32 @@
     xmlHttp.send(null);
 	}
 	
-	var getLatLong = function(word){
-		console.log(word);
+	function keyDownHandler(e) {
+    if(e.keyCode == 39) {
+        rightPressed = true;
+    }
+    else if(e.keyCode == 37) {
+        leftPressed = true;
+    } else if(e.keyCode == 38) {
+		upPressed = true;
+	} else if(e.keyCode == 40){
+		downPressed = true;
 	}
+	}
+	
+	function keyUpHandler(e) {
+    if(e.keyCode == 39) {
+        rightPressed = false;
+    }
+    else if(e.keyCode == 37) {
+        leftPressed = false;
+    } else if(e.keyCode == 38) {
+		upPressed = false;
+	} else if(e.keyCode == 40){
+		downPressed = false;
+	}
+	}
+	
 	
 		
 		function initialize() {
@@ -70,13 +99,60 @@
 			  placeobject.addtodashboard();
 			  placeobject.updatedashboard();
 			}
-			setTimeout(httpGetAsync(theUrl,getLatLong),0);
+			
+			var image = 'https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png';
+			 var testofmarkermovement = new google.maps.Marker({
+					position: {lat: 40.7456435, lng: -74.2558338	},
+					map: map,
+					label: place['name'],
+					title: place['name'],
+					icon:image
+			  });
+			  var playerlat = 40.7436435;
+			  var playerlong = -74.2558338;
+			  var testofplayermovement = new google.maps.Marker({
+					position: {lat: playerlat, lng: playerlong	},
+					map: map,
+					label: place['name'],
+					title: place['name'],
+					icon:image
+			  });
+			  
+			  var testlat = 40.7456435;
+			  var testlong = -74.2558338;
+			  
+			  testofmarkermovement.setPosition( new google.maps.LatLng( testlat,  testlong) );
+			  var dx = .0002;
+			  var dy = .0002;
+			  
 			setInterval(function(){
+				if(rightPressed) {
+					playerlong += .0001;
+				}
+				else if(leftPressed) {
+					playerlong -= .0001;
+				} else if(upPressed){
+					playerlat += .0001;
+				} else if(downPressed){
+					playerlat -= .0001
+				}
+				
+				testofplayermovement.setPosition(new google.maps.LatLng( playerlat,  playerlong) );
+			},10);
+			
+			setInterval(function(){
+				//updates dashboard in real time
 				for (var index in listofplaceobjects){
 				listofplaceobjects[index].subtractfood(2);
 				listofplaceobjects[index].updatedashboard();
-				}
+				}	
+				//updates timers in real time
 				draw();
+				
+				//moves zombies in real time
+				testlat += dx;
+				testlong += dy;
+				testofmarkermovement.setPosition(new google.maps.LatLng( testlat,  testlong) );
 			}, 1000);
 		  }
 		}

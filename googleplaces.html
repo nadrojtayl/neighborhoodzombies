@@ -55,6 +55,14 @@
 			  var place = results[i];
 			  var lat = place['geometry']['location']['lat']();
 			  var lon = place['geometry']['location']['lng']();
+			  
+			  var marker = new google.maps.Marker({
+					position: {lat: lat, lng: lon},
+					map: map,
+					label: place['name'],
+					title: place['name']
+			  });
+			  
 			  //console.log(place['vicinity'].replace(" ","+"));
 			  var placeobject = new Place(place);
 			  listofplaceobjects.push(placeobject);

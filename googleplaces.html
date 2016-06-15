@@ -1,0 +1,120 @@
+<html>
+<head>
+<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?libraries=places"></script>
+<script>
+
+	function run(){
+		function initialize() {
+		//CREATE MAP
+			//specifies address to focus this zombie game on
+			  var address = new google.maps.LatLng(40.7465406,-74.2596245);
+			//creates map based on address
+			  map = new google.maps.Map(document.getElementById('googleMap'), {
+				  center: address,
+				  zoom: 15
+				});
+		//GET PLACES
+		//composes request to get names of local businesses and places from google
+			 var request = {
+				location: address,
+				radius: '500',
+				types: ['store']
+			  };
+		//inits list of places
+		var listofplaceobjects;
+
+			 service = new google.maps.places.PlacesService(map);
+			  service.nearbySearch(request, callback);
+		}
+
+		//Takes places received from google and uses to fill game dashboard and list of buttons
+		function callback(results, status) {
+			var placebuttonholder = document.getElementById("placeoptions");
+		  if (status == google.maps.places.PlacesServiceStatus.OK) {
+			var listofplaceobjects = [];
+			for (var i = 0; i < results.length; i++) {
+			  var place = results[i];
+			  var placeobject = new Place(place);
+			  listofplaceobjects.push(placeobject);
+			  placeobject.addtobuttonlist();
+			  placeobject.addtodashboard();
+			  placeobject.updatedashboard();
+			}
+			setInterval(function(){
+				for (var index in listofplaceobjects){
+				listofplaceobjects[index].subtractfood(2);
+				}
+			}, 1000);
+		  }
+		}
+		
+		
+		//DEFINES PLACE OBJECT
+		var Place = function(googleplaceobject) {
+			this.name = googleplaceobject['name'];
+			this.food = 50; 
+			this.medicine = 50;
+			this.survivors = 50;
+		}
+		
+		Place.prototype.addtobuttonlist = function(){
+			var placebuttonholder = document.getElementById("placeoptions");
+			var newplacebutton =  document.createElement("button");
+			newplacebutton.setAttribute("value",this.name);
+			newplacebutton.appendChild(document.createTextNode(this.name));
+			placebuttonholder.appendChild(newplacebutton);
+		}
+		
+		Place.prototype.addtodashboard = function(){
+			var dashboard = document.getElementById("locationstable");
+			var row = document.createElement("tr");
+			
+			//ADD NAME
+			var name = document.createElement("td");
+			name.appendChild(document.createTextNode(this.name));
+			row.appendChild(name);
+			//ADD FOOD
+			var food = document.createElement("td");
+			food.appendChild(document.createTextNode(this.food));
+			row.appendChild(food);
+			
+			dashboard.appendChild(row);
+			this.row = row;
+			this.nameintable = name;
+			this.foodintable = food;
+		}
+		
+		Place.prototype.updatedashboard = function(){
+			console.log(this.foodintable);
+		}
+		
+		Place.prototype.subtractfood = function(amount){
+			this.food = this.food - amount;
+		}
+		
+		initialize();
+	}
+</script>
+</head>
+
+<body onload="run()">
+<div id="googleMap" style="width:500px;height:380px;">
+</div>
+<div id = "placeoptions"style="width:500px;"></div>
+<div id = "dashboard">
+	<table id = "locationstable" border="1" style="width:100%">
+		<tr>
+			<th>Place Name </th>
+			<th>Food/Water</th>
+			<th>Medicine</th>
+			<th>Survivors</th>
+		</tr>
+		<tr>
+			<td> Ryan </td>
+		</tr>
+	</table>
+</div>
+</body>
+
+</html>
+

@@ -18,7 +18,7 @@
 			 var request = {
 				location: address,
 				radius: '500',
-				types: ['store']
+				types: []
 			  };
 		//inits list of places
 		var listofplaceobjects;
@@ -43,7 +43,9 @@
 			setInterval(function(){
 				for (var index in listofplaceobjects){
 				listofplaceobjects[index].subtractfood(2);
+				listofplaceobjects[index].updatedashboard();
 				}
+				draw();
 			}, 1000);
 		  }
 		}
@@ -71,11 +73,11 @@
 			
 			//ADD NAME
 			var name = document.createElement("td");
-			name.appendChild(document.createTextNode(this.name));
+			name.innerHTML = this.name;
 			row.appendChild(name);
 			//ADD FOOD
 			var food = document.createElement("td");
-			food.appendChild(document.createTextNode(this.food));
+			food.innerHTML = this.food;
 			row.appendChild(food);
 			
 			dashboard.appendChild(row);
@@ -85,11 +87,32 @@
 		}
 		
 		Place.prototype.updatedashboard = function(){
-			console.log(this.foodintable);
+			this.foodintable.innerHTML = this.food;
 		}
 		
 		Place.prototype.subtractfood = function(amount){
-			this.food = this.food - amount;
+			if (this.food > 0){
+				this.food = this.food - amount;
+			}
+		}
+		
+		//draws timer that informs player when new zombies will appear
+		var canvas = document.getElementById("timerdashboard");
+		var ctx = canvas.getContext("2d");
+		var endingangle = 0;
+		var endingangleincrement = (Math.PI*2)/10;
+		
+		function draw(){
+			ctx.clearRect(0, 0, canvas.width, canvas.height);
+			ctx.beginPath();
+			ctx.arc(canvas.width/2, canvas.height/2, 20, 0, endingangle);
+			endingangle += endingangleincrement;
+			if(endingangle>0 && endingangle === Math.PI*2){
+				endingangle = 0;
+			}
+			ctx.fillStyle = "#0095DD";
+			ctx.fill();
+			ctx.closePath();
 		}
 		
 		initialize();
@@ -98,7 +121,9 @@
 </head>
 
 <body onload="run()">
-<div id="googleMap" style="width:500px;height:380px;">
+<div id=firstrowofelements>
+	<div id="googleMap" style="width:500px;height:380px;"></div>
+	<canvas id = "timerdashboard"</canvas>
 </div>
 <div id = "placeoptions"style="width:500px;"></div>
 <div id = "dashboard">

@@ -4,6 +4,25 @@
 <script>
 
 	function run(){
+	
+	var theUrl = "https://maps.googleapis.com/maps/api/geocode/json?address=1600+Amphitheatre+Parkway,+Mountain+View,+CA";
+	
+	function httpGetAsync(theUrl, callback)
+	{
+    var xmlHttp = new XMLHttpRequest();
+    xmlHttp.onreadystatechange = function() { 
+        if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
+            callback(xmlHttp.responseText);
+    }
+    xmlHttp.open("GET", theUrl, true); // true for asynchronous 
+    xmlHttp.send(null);
+	}
+	
+	var getLatLong = function(word){
+		console.log(word);
+	}
+	
+		
 		function initialize() {
 		//CREATE MAP
 			//specifies address to focus this zombie game on
@@ -34,12 +53,16 @@
 			var listofplaceobjects = [];
 			for (var i = 0; i < results.length; i++) {
 			  var place = results[i];
+			  var lat = place['geometry']['location']['lat']();
+			  var lon = place['geometry']['location']['lng']();
+			  //console.log(place['vicinity'].replace(" ","+"));
 			  var placeobject = new Place(place);
 			  listofplaceobjects.push(placeobject);
 			  placeobject.addtobuttonlist();
 			  placeobject.addtodashboard();
 			  placeobject.updatedashboard();
 			}
+			setTimeout(httpGetAsync(theUrl,getLatLong),0);
 			setInterval(function(){
 				for (var index in listofplaceobjects){
 				listofplaceobjects[index].subtractfood(2);
